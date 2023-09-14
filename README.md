@@ -1,5 +1,8 @@
 # vue-notion
 
+## Memo
+* サーバが Node 16 環境のため fibers は入れない。(Laravel 10が稼働しているため)
+
 ## Project setup
 ```
 npm install
@@ -9,16 +12,3 @@ npm install
 ```
 npm run serve
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
