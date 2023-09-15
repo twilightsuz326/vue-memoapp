@@ -22,4 +22,9 @@ export default {
 #app {
   height: 100vh;
 }
+button.transparent {
+  margin: 5px;
+  background-color: transparent;
+  border: none;
+}
 </style>
