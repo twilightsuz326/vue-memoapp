@@ -1,6 +1,6 @@
 <template>
   <div class="main-page">
-    <div class="left-menu">
+    <div class="left-menu" @click.self="onEditNoteEnd()">
       <!-- ノートリスト -->
       <NoteItem
         v-for="note in noteList"
@@ -8,13 +8,16 @@
         v-bind:note="note"
         @mouseover="note.mouseover = $event"
         @delete="onDeleteNote"
+        @edit="onEditNote"
+        @editstart="onEditNoteStart"
+        @editend="onEditNoteEnd"
       />
       <!-- ノート追加ボタン -->
         <button class="transparent" @click="onClickButtonAdd">
           <i class="fas fa-plus-square"></i>ノートを追加
         </button>
     </div>
-    <div class="right-view">
+    <div class="right-view" @click.self="onEditNoteEnd()">
       右ビュー
     </div>
   </div>
@@ -35,11 +38,25 @@ export default {
         id: new Date().getTime().toString(),
         name: '新しいノート',
         mouseover: false,
+        editing: false,
       });
     },
     onDeleteNote: function (id) {
-      const index = this.noteList.indexOf(id);
-      this.noteList.splice(index, 1);
+      this.noteList = this.noteList.filter(note => note.id !== id);
+    },
+    onEditNote: function (editNote, name) {
+      editNote.name = name;
+    },
+    onEditNoteStart: function (editNote) {
+      for (let note of this.noteList) {
+        note.editing = false;
+      }
+      editNote.editing = true;
+    },
+    onEditNoteEnd: function () {
+      for (let note of this.noteList) {
+        note.editing = false;
+      }
     },
   },
   components: {
