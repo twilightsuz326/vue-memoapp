@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <NavigationBar />
-    <MainPage />
     <!-- URLに対応したコンポーネントを表示する -->
     <router-view></router-view>
   </div>
