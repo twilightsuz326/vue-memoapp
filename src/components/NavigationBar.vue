@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <!-- title -->
-        <a class="navbar-brand" href="/main">TechpitNotion</a>
+        <router-link class="navbar-brand" to="/main">TechpitNotion</router-link>
 
         <!-- 画面サイズに応じて折りたたむ設定 -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -12,7 +12,7 @@
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="/main"><i class="fas fa-file-alt"></i>ノートリスト</a>
+                    <router-link class="nav-link" to="/main"><i class="fas fa-file-alt"></i>ノートリスト</router-link>
                 </li>
 
                 <li class="nav-item dropdown">
@@ -21,9 +21,9 @@
                         学習用ページ
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/study/binding">Binding</a></li>
-                        <li><a class="dropdown-item" href="/study/directive">Directive</a></li>
-                        <li><a class="dropdown-item" href="/study/event">Event</a></li>
+                        <li><router-link class="dropdown-item" to="/study/binding">Binding</router-link></li>
+                        <li><router-link class="dropdown-item" to="/study/directive">Directive</router-link></li>
+                        <li><router-link class="dropdown-item" to="/study/event">Event</router-link></li>
                     </ul>
                 </li>
             </ul>
