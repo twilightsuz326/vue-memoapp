@@ -44,52 +44,26 @@ export default {
         children: [],
       })
     },
-    onDeleteNote: function (deleteNote) {
-      const removeNote = (notes) => {
-        const index = notes.findIndex(note => note.id === deleteNote.id);
-        if (index > -1) {
-          notes.splice(index, 1);
-          return true;
-        }
-
-        for (let note of notes) {
-          if (note.children && removeNote(note.children)) return true;
-        }
-        return false;
-      }
-
-      removeNote(this.noteList);
+    onDeleteNote: function (parentNote, deleteNote) {
+      const targetList = parentNote == null ? this.noteList : parentNote.children;
+      const deleteIndex = targetList.indexOf(deleteNote);
+      targetList.splice(deleteIndex, 1);
     },
-    onEditNoteStart: function (editNote) {
-      const setEditingStatusRecursively = (notes, targetNoteId, status) => {
-        for (let note of notes) {
-          if (note.id === targetNoteId) {
-            note.editing = status;
-            return true;
-          } else if (note.children && note.children.length > 0) {
-            const isUpdated = setEditingStatusRecursively(note.children, targetNoteId, status);
-            if (isUpdated) return true;
-          }
-        }
-        return false;
+    onEditNoteStart: function (editNote, parentNote) {
+      console.log(editNote, parentNote);
+      alert(editNote.name);
+      const targetList = parentNote == null ? this.noteList : parentNote.children;
+      for (let note of targetList) {
+        note.editing = (note.id === editNote.id);
+        this.onEditNoteStart(editNote, note);
       }
-
-      setEditingStatusRecursively(this.noteList, editNote.id, true);
     },
-    onEditNoteEnd: function () {
-      for (let note of this.noteList) {
+    onEditNoteEnd: function (parentNote) {
+      const targetList = parentNote == null ? this.noteList : parentNote.children;
+      for (let note of targetList) {
         note.editing = false;
+        this.onEditNoteEnd(note);
       }
-      // 子ノートの編集状態をリセット
-      const resetEditingStatusRecursively = (notes) => {
-        for (let note of notes) {
-          note.editing = false;
-          if (note.children && note.children.length > 0) {
-            resetEditingStatusRecursively(note.children);
-          }
-        }
-      }
-      resetEditingStatusRecursively(this.noteList);
     },
     onNoteMouseOver: function (hoveredNote) {
       this.updateMouseOverStatus(this.noteList, hoveredNote.id, true);

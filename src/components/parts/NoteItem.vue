@@ -21,7 +21,7 @@
                     <div class="button-icon" @click.stop="onClickEdit(note)">
                         <i class="fas fa-edit"></i>
                     </div>
-                    <div class="button-icon" @click.stop="onClickDelete(note)">
+                    <div class="button-icon" @click.stop="onClickDelete(parentNote, note)">
                         <i class="fas fa-trash"></i>
                     </div>
                 </div>
@@ -31,6 +31,7 @@
             <NoteItem
             v-for="childNote in note.children"
             v-bind:note="childNote"
+            v-bind:parentNote="note"
             v-bind:key="childNote.id"
           @delete="onDeleteNote"
           @editStart="onEditNoteStart" 
@@ -48,6 +49,7 @@ export default {
     name: 'NoteItem',
     props: [
         'note',
+        'parentNote',
     ],
     computed: {
         noteName: {
@@ -66,8 +68,8 @@ export default {
         onMouseLeave: function () {
             this.$emit('mouseLeave', this.note);
         },
-        onClickDelete: function (note) {
-            this.$emit('delete', note);
+        onClickDelete: function (parentNote, note) {
+            this.$emit('delete', parentNote, note);
         },
         onClickEdit: function (note) {
             this.$emit('editStart', note);
@@ -132,9 +134,8 @@ export default {
             border-radius: 5px;
         }
     }
-
-    .child-note {
-        padding-left: 10px;
-    }
+}
+.child-note {
+    padding-left: 10px;
 }
 </style>
