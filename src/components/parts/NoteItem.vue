@@ -39,6 +39,7 @@
           @mouseOver="onNoteMouseOver" 
           @mouseLeave="onNoteMouseLeave"
           @addChild="onAddChildNote"
+          @edit="onEditNote"
             />
         </div>
     </div>
@@ -97,6 +98,9 @@ export default {
         },
         onAddChildNote: function (note) {
             this.$emit('addChild', note);
+        },
+        onEditNote: function (editNote, value) {
+            this.$emit('edit', editNote, value);
         },
     },
 }

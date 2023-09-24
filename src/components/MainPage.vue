@@ -12,6 +12,7 @@
       @mouseOver="onNoteMouseOver" 
       @mouseLeave="onNoteMouseLeave"
       @addChild="onAddChildNote"
+      @edit="onEditNote"
       />
 
       <!-- ノート追加ボタン -->
@@ -50,8 +51,6 @@ export default {
       targetList.splice(deleteIndex, 1);
     },
     onEditNoteStart: function (editNote, parentNote) {
-      console.log(editNote, parentNote);
-      alert(editNote.name);
       const targetList = parentNote == null ? this.noteList : parentNote.children;
       for (let note of targetList) {
         note.editing = (note.id === editNote.id);
@@ -88,6 +87,9 @@ export default {
           this.updateMouseOverStatus(note.children, noteId, status);
         }
       }
+    },
+    onEditNote: function (editNote, value) {
+      editNote.name = value;
     },
   },
   components: {
