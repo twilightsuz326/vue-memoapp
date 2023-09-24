@@ -12,45 +12,52 @@
                 <div class="note-name">{{ note.name }}</div>
 
                 <div v-show="note.mouseover" class="buttons">
-                    <div class="button-icon" @click="onclickChildNote(note)">
+                    <div class="button-icon" v-if="layer < 3" @click="onclickChildNote(note)">
                         <i class="fas fa-sitemap"></i>
                     </div>
-                    <div class="button-icon">
+                    <div class="button-icon" @click="onClickAddNoteAfter(parentNote, note)">
                         <i class="fas fa-plus-circle"></i>
                     </div>
-                    <div class="button-icon" @click.stop="onClickEdit(note)">
+                    <div class="button-icon" @click="onClickEdit(note)">
                         <i class="fas fa-edit"></i>
                     </div>
-                    <div class="button-icon" @click.stop="onClickDelete(parentNote, note)">
+                    <div class="button-icon" @click="onClickDelete(parentNote, note)">
                         <i class="fas fa-trash"></i>
                     </div>
                 </div>
             </template>
         </div>
         <div class="child-note">
+            <draggable @update="onDraggableUpdate" group="notes">
             <NoteItem
             v-for="childNote in note.children"
             v-bind:note="childNote"
+            v-bind:layer="layer + 1"
             v-bind:parentNote="note"
             v-bind:key="childNote.id"
-          @delete="onDeleteNote"
-          @editStart="onEditNoteStart" 
-          @editEnd="onEditNoteEnd" 
-          @mouseOver="onNoteMouseOver" 
-          @mouseLeave="onNoteMouseLeave"
-          @addChild="onAddChildNote"
-          @edit="onEditNote"
+            @delete="onDeleteNote"
+            @editStart="onEditNoteStart" 
+            @editEnd="onEditNoteEnd" 
+            @mouseOver="onNoteMouseOver" 
+            @mouseLeave="onNoteMouseLeave"
+            @addChild="onAddChildNote"
+            @addNoteAfter="onClickAddNoteAfter"
+            @edit="onEditNote"
             />
+            </draggable>
         </div>
     </div>
 </template>
 
 <script>
+import draggable from 'vuedraggable'
+
 export default {
     name: 'NoteItem',
     props: [
         'note',
         'parentNote',
+        'layer'
     ],
     computed: {
         noteName: {
@@ -81,6 +88,9 @@ export default {
         onclickChildNote: function (note) {
             this.$emit('addChild', note);
         },
+        onClickAddNoteAfter: function (parentNote, note) {
+            this.$emit('addNoteAfter', parentNote, note);
+        },
         onDeleteNote: function (deleteNote) {
             this.$emit('delete', deleteNote);
         },
@@ -102,7 +112,13 @@ export default {
         onEditNote: function (editNote, value) {
             this.$emit('edit', editNote, value);
         },
+        onDraggableUpdate: function (newChildrenOrder) {
+            this.$emit('dragupdate', newChildrenOrder);
+        }
     },
+    components: {
+        draggable,
+    }
 }
 </script>
 

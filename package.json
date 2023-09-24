@@ -12,7 +12,8 @@
     "sass": "^1.67.0",
     "sass-loader": "^13.3.2",
     "vue": "^2.6.14",
-    "vue-router": "^3.5.3"
+    "vue-router": "^3.5.3",
+    "vuedraggable": "^2.24.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
