@@ -9,6 +9,7 @@
       v-bind:key="note.id" 
       v-bind:layer="1"
       @delete="onDeleteNote"
+      @select="onSelectNote"
       @editStart="onEditNoteStart" 
       @editEnd="onEditNoteEnd" 
       @mouseOver="onNoteMouseOver" 
@@ -26,7 +27,19 @@
       </button>
     </div>
     <div class="right-view" @click.self="onEditNoteEnd()">
-      右ビュー
+      <template v-if="selectedNote">
+        <div class="path">
+          <small>{{ selectedPath }}</small>
+        </div>
+        <div class="note-content">
+          <h3 class="note-title">{{ selectedNote.name }}</h3>
+        </div>
+      </template>
+      <template v-else>
+        <div class="no-selected-note">
+          ノートを選択してください
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -39,6 +52,7 @@ export default {
   data() {
     return {
       noteList: [],
+      selectedNote: null,
     }
   },
   methods: {
@@ -49,6 +63,7 @@ export default {
         name: `新規ノート-${layer}-${targetList.length}`,
         mouseover: false,
         editing: false,
+        selected: false,
         children: [],
         layer: layer,
       };
@@ -65,6 +80,17 @@ export default {
       const targetList = parentNote == null ? this.noteList : parentNote.children;
       const deleteIndex = targetList.indexOf(deleteNote);
       targetList.splice(deleteIndex, 1);
+    },
+    onSelectNote: function (targetNote) {
+      // 再帰的にノート選択状態を更新
+      const updateSelectStatus = function(targetNote, noteList) {
+        for (let note of noteList) {
+          note.selected = (note.id === targetNote.id);
+          updateSelectStatus(targetNote, note.children);
+        }
+      };
+      updateSelectStatus(targetNote, this.noteList);
+      this.selectedNote = targetNote;
     },
     onEditNoteStart: function (editNote, parentNote) {
       const targetList = parentNote == null ? this.noteList : parentNote.children;
@@ -109,6 +135,20 @@ export default {
     },
     onDraggableUpdate: function (event) {
       this.noteList = event;
+    },
+  },
+  computed: {
+    selectedPath: function () {
+      const searchSelectedPath = function(noteList, path) {
+        for (let note of noteList) {
+          const currentPath = path == null ? note.name : `${path} > ${note.name}`;
+          if (note.selected) return currentPath;
+          const selectedPath = searchSelectedPath(note.children, currentPath);
+          if (selectedPath.length > 0) return selectedPath;
+        }
+        return '';
+      }
+      return searchSelectedPath(this.noteList);
     },
   },
   components: {
