@@ -1,4 +1,7 @@
-# vue-notion
+# vue-MemoApp
+
+## Preview
+![preview](https://user-images.githubusercontent.com/64389838/270657275-ba373088-0f7a-4644-bd6a-caac688af024.gif)
 
 ## Memo
 * サーバが Node 16 環境のため fibers は入れない。(Laravel 10が稼働しているため)
@@ -12,3 +15,10 @@ npm install
 ```
 npm run serve
 ```
+
+### 機能一覧
+* メモ一覧表示
+  * 階層構造に対応
+* メモ登録
+* メモ編集
+* メモ削除
