@@ -17,6 +17,7 @@
       @addChild="onAddChildNote"
       @addNoteAfter="onAddNoteAfter"
       @edit="onEditNote"
+      @editWidgettxt="onEditWidgettxt"
       @dragupdate="onDraggableUpdate"
       />
       </draggable>
@@ -33,6 +34,22 @@
         </div>
         <div class="note-content">
           <h3 class="note-title">{{ selectedNote.name }}</h3>
+          <WidgetItem
+              v-for="widget in selectedNote.widgetList"
+              v-bind:widget="widget"
+              v-bind:layer="1"
+              v-bind:key="widget.id"
+              @delete="onDeleteWidget"
+              @addChild="onAddChildWidget"
+              @addWidgetAfter="onAddWidgetAfter"
+              @parentMouseOver="onWidgetMouseOver"
+              @parentMouseLeave="onWidgetMouseLeave"
+              @childMouseOver="onWidgetMouseOver"
+              @childMouseLeave="onWidgetMouseLeave"
+            />
+          <button class="transparent" @click="onClickButtonAddWidget">
+            <i class="fas fa-plus-square"></i>ウィジェットを追加
+          </button>
         </div>
       </template>
       <template v-else>
@@ -46,6 +63,7 @@
 
 <script>
 import NoteItem from '@/components/parts/NoteItem.vue'
+import WidgetItem from '@/components/parts/WidgetItem.vue'
 import draggable from 'vuedraggable'
 
 export default {
@@ -66,7 +84,9 @@ export default {
         selected: false,
         children: [],
         layer: layer,
+        widgetList: [],
       };
+      this.onAddWidgetCommon(note.widgetList);
       if (index == null) {
         targetList.push(note);
       } else {
@@ -133,8 +153,57 @@ export default {
     onEditNote: function (editNote, value) {
       editNote.name = value;
     },
+    onEditWidgettxt: function (editWidget, value) {
+      editWidget.text = value;
+    },
+    onWidgetMouseOver: function (event) {
+      console.log(event)
+      for (let widget of this.selectedNote.widgetList) {
+        if (widget.id === event.id) {
+          widget.mouseover = true;
+        } else if (widget.children && widget.children.length > 0) {
+          this.updateMouseOverStatus(widget.children, event.id, true);
+        }
+      }
+    },
+    onWidgetMouseLeave: function (widget) {
+      widget.mouseover = false;
+    },
     onDraggableUpdate: function (event) {
       this.noteList = event;
+    },
+    onAddWidgetCommon: function (targetList, layer, index) {
+      layer = layer || 1;
+      const widget = {
+        id: new Date().getTime().toString(16),
+        type: 'heading',
+        text: '',
+        mouseover: false,
+        children: [],
+        layer: layer,
+      };
+      if (index == null) {
+        targetList.push(widget);
+      } else {
+        targetList.splice(index + 1, 0, widget);
+      }
+    },
+    onClickButtonAddWidget: function () {
+      this.onAddWidgetCommon(this.selectedNote.widgetList);
+    },
+    onAddChildWidget: function (widget) {
+      this.onAddWidgetCommon(widget.children, widget.layer + 1);
+    },
+    onAddWidgetAfter: function (parentWidget, note) {
+      const targetList = parentWidget == null ? this.selectedNote.widgetList : parentWidget.children;
+      const layer = parentWidget == null ? null : parentWidget.layer + 1;
+      const index = targetList.indexOf(note);
+      this.onAddWidgetCommon(targetList, layer, index);
+    },
+    onDeleteWidget: function (parentWidget, widget) {
+      const targetList = parentWidget == null ? this.selectedNote.widgetList : parentWidget.children;
+      const index = targetList.indexOf(widget);
+      targetList.splice(index, 1);
     },
   },
   computed: {
@@ -153,6 +222,7 @@ export default {
   },
   components: {
     NoteItem,
+    WidgetItem,
     draggable,
   },
 }
